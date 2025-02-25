@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>German Matching Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <button id="resetButton" class="reset-button">
+        <svg class="icon-x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="stats">
+        <div id="matchesCounter" class="matches-counter">Matches: 0/3</div>
+        <div id="triesCounter" class="tries-counter">5 tries left</div>
+      </div>
+    </div>
+
+    <h1 class="title">Tap the matching pairs</h1>
+
+    <!-- Game Grid -->
+    <div class="game-grid">
+      <div id="leftColumn" class="column"></div>
+      <div id="rightColumn" class="column"></div>
+    </div>
+
+    <!-- Game Summary Dialog -->
+    <div id="dialogOverlay" class="dialog-overlay">
+      <div class="dialog">
+        <h2 id="dialogTitle" class="dialog-title">Game Over!</h2>
+        <div id="dialogDescription" class="dialog-description">
+          <div id="statsList" class="stats-list">
+            <p class="stats-item">Sets Completed: 0</p>
+            <p class="stats-item">Mistakes Made: 0/5</p>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button id="dialogButton" class="dialog-button">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
