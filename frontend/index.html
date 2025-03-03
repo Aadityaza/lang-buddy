@@ -1,54 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>German Matching Game</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German Text Pronunciation</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .text { 
+            cursor: pointer; 
+            color: blue; 
+            text-decoration: underline;
+            padding: 2px;
+        }
+        .text:hover {
+            background-color: #e0e0ff;
+        }
+        #notification {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .instructions {
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <button id="resetButton" class="reset-button">
-        <svg class="icon-x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      <div class="progress-bar">
-        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
-      </div>
-      <div class="stats">
-        <div id="matchesCounter" class="matches-counter">Matches: 0/3</div>
-        <div id="triesCounter" class="tries-counter">5 tries left</div>
-      </div>
+    <h1>German Pronunciation Helper</h1>
+    
+    <div id="notification"></div>
+    
+    <p id="germanText">
+        <span class="text">Guten</span>
+        <span class="text">Tag</span>,
+        <span class="text">wie</span>
+        <span class="text">geht</span>
+        <span class="text">es</span>
+        <span class="text">Ihnen</span>?
+    </p>
+    
+    <div class="instructions">
+        <p>Click on any blue word to hear its pronunciation.</p>
     </div>
-
-    <h1 class="title">Tap the matching pairs</h1>
-
-    <!-- Game Grid -->
-    <div class="game-grid">
-      <div id="leftColumn" class="column"></div>
-      <div id="rightColumn" class="column"></div>
-    </div>
-
-    <!-- Game Summary Dialog -->
-    <div id="dialogOverlay" class="dialog-overlay">
-      <div class="dialog">
-        <h2 id="dialogTitle" class="dialog-title">Game Over!</h2>
-        <div id="dialogDescription" class="dialog-description">
-          <div id="statsList" class="stats-list">
-            <p class="stats-item">Sets Completed: 0</p>
-            <p class="stats-item">Mistakes Made: 0/5</p>
-          </div>
-        </div>
-        <div class="dialog-footer">
-          <button id="dialogButton" class="dialog-button">Play Again</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    
+    <script>
+        let germanVoice = null;
+        const notification = document.getElementById('notification');
+        
+        // Function to show notification
+        function showNotification(message, type) {
+            notification.textContent = message;
+            notification.className = type;
+            notification.style.display = 'block';
+        }
+        
+        // Function to load available voices and find German voice
+        function loadVoices() {
+            const voices = speechSynthesis.getVoices();
+            
+            // Try to find a German voice
+            germanVoice = voices.find(voice => voice.lang.startsWith('de'));
+            
+            if (germanVoice) {
+                showNotification(`German voice found: ${germanVoice.name}. Click on any blue word to hear pronunciation.`, 'success');
+                console.log(`Using German voice: ${germanVoice.name}`);
+            } else {
+                // No German voice found - show instructions
+                showNotification('No German voices available in your browser. Try using Chrome or Edge, or install German language support in your operating system.', 'warning');
+                console.log('No German voice found');
+            }
+        }
+        
+        // Function to speak a word
+        function speakWord(word) {
+            if (!window.speechSynthesis) {
+                showNotification('Speech synthesis is not supported in your browser.', 'warning');
+                return;
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'de-DE';
+            
+            if (germanVoice) {
+                utterance.voice = germanVoice;
+            }
+            
+            // Cancel any ongoing speech
+            speechSynthesis.cancel();
+            
+            // Speak the word
+            speechSynthesis.speak(utterance);
+        }
+        
+        // Wait for voices to load (this is necessary in some browsers)
+        if (window.speechSynthesis) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+            
+            // Try loading voices immediately in case they are already available
+            loadVoices();
+            
+            // Add click event to each word
+            document.querySelectorAll('.text').forEach(span => {
+                span.addEventListener('click', function() {
+                    // Highlight the clicked word
+                    this.style.backgroundColor = '#e0e0ff';
+                    setTimeout(() => {
+                        this.style.backgroundColor = '';
+                    }, 500);
+                    
+                    speakWord(this.textContent);
+                });
+            });
+        } else {
+            showNotification('Speech synthesis is not supported in your browser. Please try a modern browser like Chrome, Edge, or Safari.', 'warning');
+        }
+    </script>
 </body>
 </html>

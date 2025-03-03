@@ -1,3 +1,12 @@
 .env
 .venv/
 /venv
+*.pyc
+
+*.pyc
+
+/__pycache__
+/api/__pycache__
+/api/routers/__pycache__
+/services/__pycache__
+/services/chat/__pycache__
